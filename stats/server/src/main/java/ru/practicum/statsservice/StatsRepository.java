@@ -15,14 +15,14 @@ public interface StatsRepository extends JpaRepository<Hit, Long> {
             "FROM Hit h " +
             "WHERE h.timestamp BETWEEN :start AND :end " +
             "GROUP BY h.ip, h.app, h.uri " +
-            "ORDER BY COUNT(DISTINCT h.ip)")
+            "ORDER BY COUNT(DISTINCT h.ip) DESC")
     List<HitDtoOut> getStatisticsUniq(LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT new ru.practicum.statsdto.HitDtoOut(h.app, h.uri, COUNT(h.ip)) " +
             "FROM Hit h " +
             "WHERE h.timestamp BETWEEN :start AND :end " +
             "GROUP BY h.ip, h.app, h.uri " +
-            "ORDER BY COUNT(h.ip)")
+            "ORDER BY COUNT(h.ip) DESC")
     List<HitDtoOut> getStatistics(LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT new ru.practicum.statsdto.HitDtoOut(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
@@ -30,7 +30,7 @@ public interface StatsRepository extends JpaRepository<Hit, Long> {
             "WHERE h.uri IN :uris " +
             "AND h.timestamp BETWEEN :start AND :end " +
             "GROUP BY h.ip, h.app, h.uri " +
-            "ORDER BY COUNT(DISTINCT h.ip)")
+            "ORDER BY COUNT(DISTINCT h.ip) DESC")
     List<HitDtoOut> getStatisticsUniqAndUris(LocalDateTime start, LocalDateTime end, List<String> uris);
 
     @Query("SELECT new ru.practicum.statsdto.HitDtoOut(h.app, h.uri, COUNT(h.ip)) " +
@@ -38,6 +38,6 @@ public interface StatsRepository extends JpaRepository<Hit, Long> {
             "WHERE h.uri IN :uris " +
             "AND h.timestamp BETWEEN :start AND :end " +
             "GROUP BY h.ip, h.app, h.uri " +
-            "ORDER BY COUNT(h.ip)")
+            "ORDER BY COUNT(h.ip) DESC")
     List<HitDtoOut> getStatisticsUris(LocalDateTime start, LocalDateTime end, List<String> uris);
 }
