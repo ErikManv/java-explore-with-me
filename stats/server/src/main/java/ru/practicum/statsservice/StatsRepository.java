@@ -15,27 +15,29 @@ public interface StatsRepository extends JpaRepository<Hit, Long> {
             "FROM Hit h " +
             "WHERE h.timestamp BETWEEN :start AND :end " +
             "GROUP BY h.ip, h.app, h.uri " +
-            "ORDER BY COUNT(DISTINCT h.ip) DESC")
+            "ORDER BY COUNT(DISTINCT h.ip)")
     List<HitDtoOut> getStatisticsUniq(LocalDateTime start, LocalDateTime end);
 
-    @Query("SELECT new ru.practicum.statsdto.HitDtoOut(h.app, h.uri, COUNT(h.ip))" +
-            " FROM Hit h " +
+    @Query("SELECT new ru.practicum.statsdto.HitDtoOut(h.app, h.uri, COUNT(h.ip)) " +
+            "FROM Hit h " +
             "WHERE h.timestamp BETWEEN :start AND :end " +
             "GROUP BY h.ip, h.app, h.uri " +
-            "ORDER BY COUNT(h.ip) DESC")
+            "ORDER BY COUNT(h.ip)")
     List<HitDtoOut> getStatistics(LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT new ru.practicum.statsdto.HitDtoOut(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
             "FROM Hit h " +
-            "WHERE h.uri IN :uris AND h.timestamp BETWEEN :start AND :end " +
+            "WHERE h.uri IN :uris " +
+            "AND h.timestamp BETWEEN :start AND :end " +
             "GROUP BY h.ip, h.app, h.uri " +
-            "ORDER BY COUNT(DISTINCT h.ip) DESC")
+            "ORDER BY COUNT(DISTINCT h.ip)")
     List<HitDtoOut> getStatisticsUniqAndUris(LocalDateTime start, LocalDateTime end, List<String> uris);
 
-    @Query("SELECT new ru.practicum.statsdto.HitDtoOut(h.app, h.uri, COUNT(h.ip))" +
-            " FROM Hit h " +
-            "WHERE h.uri IN :uris AND h.timestamp BETWEEN :start AND :end " +
+    @Query("SELECT new ru.practicum.statsdto.HitDtoOut(h.app, h.uri, COUNT(h.ip)) " +
+            "FROM Hit h " +
+            "WHERE h.uri IN :uris " +
+            "AND h.timestamp BETWEEN :start AND :end " +
             "GROUP BY h.ip, h.app, h.uri " +
-            "ORDER BY COUNT(h.ip) DESC")
+            "ORDER BY COUNT(h.ip)")
     List<HitDtoOut> getStatisticsUris(LocalDateTime start, LocalDateTime end, List<String> uris);
 }
