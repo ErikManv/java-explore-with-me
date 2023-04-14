@@ -1,4 +1,4 @@
-package ru.practicum.statsserver;
+package ru.practicum.statsservice;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

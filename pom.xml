@@ -11,13 +11,12 @@
 	</parent>
 
 	<name>Explore With Me</name>
-
-	<modules>
-		<module>stats</module>
+    <modules>
+        <module>stats</module>
 		<module>ewm</module>
-    </modules>
+	</modules>
 
-	<groupId>ru.practicum</groupId>
+    <groupId>ru.practicum</groupId>
 	<artifactId>explore-with-me</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -25,6 +24,9 @@
 	<properties>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+		<org.projectlombok.version>1.18.26</org.projectlombok.version>
 	</properties>
 
 	<build>

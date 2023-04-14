@@ -1,12 +1,12 @@
-package ru.practicum.statsserver;
+package ru.practicum.statsservice;
 
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.practicum.statsdto.HitDtoInput;
+import ru.practicum.statsdto.HitDtoIn;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface HitMapper {
     @Mapping(source = "timestamp",target = "timestamp", dateFormat = "yyyy-MM-dd HH:mm:ss")
-    Hit toModel(HitDtoInput hitDtoIn);
+    Hit toModel(HitDtoIn hitDtoIn);
 }
