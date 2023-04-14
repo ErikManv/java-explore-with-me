@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 @Builder
-public class HitDtoIn {
+public class HitDtoInput {
     @NotEmpty
     public String app;
     @NotEmpty
