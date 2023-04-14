@@ -28,7 +28,7 @@ public class StatsClient extends BaseClient {
         Map<String, Object> parameters = Map.of(
                 "start", start,
                 "end", end,
-                "urdfis", uris,
+                "uris", uris,
                 "unique", unique
         );
         return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
