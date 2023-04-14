@@ -1,4 +1,4 @@
-package ru.practicum.statsservice;
+package ru.practicum.statsserver;
 
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

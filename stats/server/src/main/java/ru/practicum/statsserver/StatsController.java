@@ -1,4 +1,4 @@
-package ru.practicum.statsservice;
+package ru.practicum.statsserver;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
