@@ -19,7 +19,7 @@ public class StatsController {
 
     @PostMapping("/hit")
     public void hit(@RequestBody HitDtoInput hitDtoInput) {
-        statsRepository.save(hitMapper.toModel(hitDtoInput));
+        statsRepository.save(hitMapper.toHit(hitDtoInput));
     }
 
     @GetMapping("/stats")
