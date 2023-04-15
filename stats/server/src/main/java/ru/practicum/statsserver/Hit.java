@@ -22,11 +22,11 @@ public class Hit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "app")
+    @Column
     private String app;
-    @Column(name = "uri")
+    @Column
     private String uri;
-    @Column(name = "ip")
+    @Column
     private String ip;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

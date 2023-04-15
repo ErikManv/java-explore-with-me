@@ -2,8 +2,8 @@ version: '3.8'
 services:
   stats-server:
     build: ./stats/server
-    image: stats_server_image
-    container_name: statssrv_container
+    image: stats_service_image
+    container_name: stats_container
     ports:
       - "9090:9090"
     depends_on:
@@ -25,8 +25,8 @@ services:
 
   ewm-service:
     build: ./ewm
-    image: ewm_server_image
-    container_name: ewmsrv_container
+    image: ewm_service_image
+    container_name: ewm_container
     ports:
       - "8080:8080"
     depends_on:
