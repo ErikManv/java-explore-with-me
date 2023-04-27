@@ -18,8 +18,9 @@ public class StatsController {
     private final HitMapper hitMapper;
 
     @PostMapping("/hit")
-    public void hit(@RequestBody HitDtoInput hitDtoInput) {
+    public ResponseEntity<Void> hit(@RequestBody HitDtoInput hitDtoInput) {
         statsRepository.save(hitMapper.toHit(hitDtoInput));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/stats")
