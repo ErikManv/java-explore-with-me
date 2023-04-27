@@ -60,7 +60,8 @@ public class RequestServiceImpl implements RequestService {
         List<Request> requests = requestRepository.findAllByEventId(eventId);
 
         if (!event.getRequestModeration() && requests.size() >= event.getParticipantLimit()) {
-            throw new IllegalEventStateException("нет мест");        }
+            throw new IllegalEventStateException("нет мест");
+        }
 
         Request request = Request.builder()
             .event(getEvent(eventId))

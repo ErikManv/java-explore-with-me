@@ -139,17 +139,18 @@ public class EventServiceImpl implements EventService {
         }
     }
     //////////////////////////////////////PUBLIC
+
     @Override
     public List<EventDto> getEventsParamPublic(String text, List<Long> categoriesId, Boolean paid, String rangeStart,
                                                String rangeEnd, Boolean onlyAvailable, SortValueEvents sort,
                                                Integer from, Integer size, HttpServletRequest request) {
 
-//        statsClient.hit(HitDtoInput.builder()
-//            .app("ewm")
-//            .ip(request.getRemoteAddr())
-//            .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern(Pattern.DATE)))
-//            .uri(request.getRequestURI())
-//            .build());
+        statsClient.hit(HitDtoInput.builder()
+            .app("ewm")
+            .ip(request.getRemoteAddr())
+            .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern(Pattern.DATE)))
+            .uri(request.getRequestURI())
+            .build());
 
         return eventRepository.searchPublic(text, categoriesId, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size).stream()
             .map(eventMapper::toEventDto)
