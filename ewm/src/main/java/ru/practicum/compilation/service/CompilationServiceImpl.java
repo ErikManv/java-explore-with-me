@@ -32,7 +32,7 @@ public class CompilationServiceImpl implements CompilationService {
     private static final Logger log = LoggerFactory.getLogger(AdminCompilationController.class);
 
     @Override
-    public CompilationDto addCompilation (CompilationDtoIn compilationDtoIn) {
+    public CompilationDto addCompilation(CompilationDtoIn compilationDtoIn) {
         List<Event> events = eventRepository.findEventsByIdIn(compilationDtoIn.getEvents());
         Compilation compilation = Compilation.builder()
             .pinned(compilationDtoIn.isPinned())
@@ -44,7 +44,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public void deleteCompilation (Long compId) {
+    public void deleteCompilation(Long compId) {
         getCompilation(compId);
         compilationRepository.deleteById(compId);
         log.info("compilation {} deleted", compId);

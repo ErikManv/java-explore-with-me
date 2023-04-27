@@ -45,15 +45,15 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestDto addRequest(Long eventId, Long userId) {
         Event event = getEvent(eventId);
-        if(userId == event.getInitiator().getId()) {
+        if (userId == event.getInitiator().getId()) {
             throw new UserRequestOwnEventException("нельзя создавать запрос на собственный Event");
         }
 
-        if(requestRepository.findRequestByEventAndRequester(getEvent(eventId), getUser(userId)) != null) {
+        if (requestRepository.findRequestByEventAndRequester(getEvent(eventId), getUser(userId)) != null) {
             throw new UserRequestOwnEventException("нельзя создавать потвторный запрос");
         }
 
-        if(event.getState() != EventState.PUBLISHED) {
+        if (event.getState() != EventState.PUBLISHED) {
             throw new IllegalEventStateException("данное событие не PUBLISHED");
         }
 
@@ -69,7 +69,7 @@ public class RequestServiceImpl implements RequestService {
             .status(RequestStatus.PENDING)
             .build();
 
-        if(!event.getRequestModeration() || event.getParticipantLimit() == 0) {
+        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             request.setStatus(RequestStatus.CONFIRMED);
         }
         return requestMapper.toDto(requestRepository.save(request));
@@ -99,8 +99,8 @@ public class RequestServiceImpl implements RequestService {
             result.setRejectedRequests(requestMapper.toRequestDtoList(rejectedReq));
             return result;
         }
-        if(requestStatusUpdateDto.getStatus().equals(RequestStatusToUpdate.CONFIRMED)) {
-            for(int i = 0; i < requestsToUpdate.size(); i++) {
+        if (requestStatusUpdateDto.getStatus().equals(RequestStatusToUpdate.CONFIRMED)) {
+            for (int i = 0; i < requestsToUpdate.size(); i++) {
                 if (!requestsToUpdate.get(i).getStatus().equals(RequestStatus.PENDING)) {
                     throw new StateException("request " + requestsToUpdate.get(i).getId() + " wasn't PENDING");
                 }
@@ -127,7 +127,7 @@ public class RequestServiceImpl implements RequestService {
                 });
 
             rejectedReq = requestsToUpdate.stream()
-                .peek(x-> x.setStatus(RequestStatus.REJECTED))
+                .peek(x -> x.setStatus(RequestStatus.REJECTED))
                 .collect(Collectors.toList());
         }
 

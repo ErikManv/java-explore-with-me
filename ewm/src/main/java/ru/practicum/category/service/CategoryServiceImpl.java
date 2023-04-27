@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto addCategory(CategoryDto categoryDto) {
-        if(categoryRepository.existsByName(categoryDto.getName())) {
+        if (categoryRepository.existsByName(categoryDto.getName())) {
             throw new DuplicateException("category", categoryDto.getName());
         }
         Category category = categoryMapper.toModel(categoryDto);
@@ -44,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto updateCategory(CategoryDto categoryDto, Long categoryId) {
-        if(categoryRepository.existsByName(categoryDto.getName())) {
+        if (categoryRepository.existsByName(categoryDto.getName())) {
             throw new DuplicateException("category", categoryDto.getName());
         }
         Category category = getCategory(categoryId);
@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long categoryId) {
-        if(eventRepository.existsByCategory(getCategory(categoryId))) {
+        if (eventRepository.existsByCategory(getCategory(categoryId))) {
             throw new DeleteObjectInUseException("category", categoryId.toString());
         }
         getCategory(categoryId);

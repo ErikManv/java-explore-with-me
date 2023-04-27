@@ -13,8 +13,9 @@ import java.util.List;
 public interface EventService {
 
     EventDto addEvent(EventDtoIn eventDtoIn, Long userId);
+
     List<EventDto> getEventsParamAdmin(List<Long> ids, List<String> states, List<Long> categories, String start, String end,
-                              Integer from ,Integer size);
+                                       Integer from, Integer size);
 
     EventDto updateEventAdmin(EventDtoUpdate eventDtoUpdateAdmin, Long eventId);
 
@@ -23,7 +24,6 @@ public interface EventService {
     EventDto getEvent(Long userId, Long eventId);
 
     EventDto updateEvent(EventDtoUpdate eventDtoUpdatePrivate, Long userId, Long eventId);
-
 
     List<EventDto> getEventsParamPublic(String text, List<Long> categoriesId, Boolean paid, String rangeStart,
                                         String rangeEnd, Boolean onlyAvailable, SortValueEvents sort, Integer from, Integer size,

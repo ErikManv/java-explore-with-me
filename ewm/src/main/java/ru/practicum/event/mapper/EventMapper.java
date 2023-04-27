@@ -5,8 +5,6 @@ import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 import ru.practicum.event.dto.EventDto;
 import ru.practicum.event.dto.EventDtoIn;
-import ru.practicum.event.dto.EventDtoShort;
-import ru.practicum.event.dto.EventDtoUpdate;
 import ru.practicum.event.model.Event;
 
 import java.util.List;

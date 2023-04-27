@@ -57,11 +57,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto addEvent(EventDtoIn eventDtoIn, Long userId) {
-        if(eventDtoIn.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+        if (eventDtoIn.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new DateException("Event date can't be later than 2 hours before the start");
         }
         Event event = eventMapper.toEventModel(eventDtoIn);
-        if(eventDtoIn.getRequestModeration() != null) {
+        if (eventDtoIn.getRequestModeration() != null) {
             event.setRequestModeration(eventDtoIn.getRequestModeration());
         }
         event.setCreatedOn(LocalDateTime.now());
@@ -83,7 +83,7 @@ public class EventServiceImpl implements EventService {
     public EventDto updateEvent(EventDtoUpdate eventDtoUpdateAdmin, Long userId, Long eventId) {
         getUser(userId);
         Event event = getEvent(eventId);
-        if(event.getState().equals(EventState.PUBLISHED)) {
+        if (event.getState().equals(EventState.PUBLISHED)) {
             throw new DuplicateException("Event", eventId.toString());
         }
         event = eventCompose(eventDtoUpdateAdmin, eventId);
@@ -103,10 +103,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDto updateEventAdmin(EventDtoUpdate eventDtoUpdateAdmin, Long eventId) {
         Event event = eventCompose(eventDtoUpdateAdmin, eventId);
-        if(eventDtoUpdateAdmin.getStateAction().equals(StateActionForAdmin.PUBLISH_EVENT.toString())) {
-            if(event.getState().equals(EventState.PUBLISHED)) {
+        if (eventDtoUpdateAdmin.getStateAction().equals(StateActionForAdmin.PUBLISH_EVENT.toString())) {
+            if (event.getState().equals(EventState.PUBLISHED)) {
                 throw new StateException("already PUBLISHED");
-            } else if(event.getState().equals(EventState.CANCELED)){
+            } else if (event.getState().equals(EventState.CANCELED)) {
                 throw new StateException("already CANCELED");
             } else {
                 event.setState(EventState.PUBLISHED);
@@ -115,9 +115,9 @@ public class EventServiceImpl implements EventService {
         }
 
         if (eventDtoUpdateAdmin.getStateAction().equals(StateActionForAdmin.REJECT_EVENT.toString())) {
-            if(event.getState().equals(EventState.PUBLISHED)) {
+            if (event.getState().equals(EventState.PUBLISHED)) {
                 throw new StateException("already PUBLISHED");
-            } else if(event.getState().equals(EventState.CANCELED)){
+            } else if (event.getState().equals(EventState.CANCELED)) {
                 throw new StateException("already CANCELED");
             } else {
                 event.setState(EventState.CANCELED);
@@ -128,8 +128,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDto> getEventsParamAdmin(List<Long> users, List<String> states, List<Long> categoriesId, String rangeStart,
-                                     String rangeEnd, Integer from , Integer size) {
-        if(states != null) {
+                                     String rangeEnd, Integer from, Integer size) {
+        if (states != null) {
             return eventMapper.toEventDtoList(eventRepository.searchByAdmin(users, states, categoriesId,
                 parseStringToDate(rangeStart), parseStringToDate(rangeEnd), from, size));
         } else {
@@ -194,20 +194,20 @@ public class EventServiceImpl implements EventService {
 
     private Event eventCompose(EventDtoUpdate eventDtoUpdateAdmin, Long eventId) {
         Event event = getEvent(eventId);
-        if(eventDtoUpdateAdmin.getAnnotation()!= null) event.setAnnotation(eventDtoUpdateAdmin.getAnnotation());
-        if(eventDtoUpdateAdmin.getCategory() != null) event.setCategory(getCategory(eventDtoUpdateAdmin.getCategory()));
-        if(eventDtoUpdateAdmin.getDescription() != null) event.setDescription(eventDtoUpdateAdmin.getDescription());
-        if(eventDtoUpdateAdmin.getEventDate() != null) {
-            if(eventDtoUpdateAdmin.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+        if (eventDtoUpdateAdmin.getAnnotation() != null) event.setAnnotation(eventDtoUpdateAdmin.getAnnotation());
+        if (eventDtoUpdateAdmin.getCategory() != null) event.setCategory(getCategory(eventDtoUpdateAdmin.getCategory()));
+        if (eventDtoUpdateAdmin.getDescription() != null) event.setDescription(eventDtoUpdateAdmin.getDescription());
+        if (eventDtoUpdateAdmin.getEventDate() != null) {
+            if (eventDtoUpdateAdmin.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
                 throw new DateException("Event date can't be later than 2 hours before the start");
             }
             event.setEventDate(eventDtoUpdateAdmin.getEventDate());
         }
-        if(eventDtoUpdateAdmin.getLocation() != null) event.setLocation(eventDtoUpdateAdmin.getLocation());
-        if(eventDtoUpdateAdmin.getPaid() != null) event.setPaid(eventDtoUpdateAdmin.getPaid());
-        if(eventDtoUpdateAdmin.getParticipantLimit() != null) event.setParticipantLimit(eventDtoUpdateAdmin.getParticipantLimit());
-        if(eventDtoUpdateAdmin.getRequestModeration() != null) event.setRequestModeration(eventDtoUpdateAdmin.getRequestModeration());
-        if(eventDtoUpdateAdmin.getTitle() != null) event.setTitle(eventDtoUpdateAdmin.getTitle());
+        if (eventDtoUpdateAdmin.getLocation() != null) event.setLocation(eventDtoUpdateAdmin.getLocation());
+        if (eventDtoUpdateAdmin.getPaid() != null) event.setPaid(eventDtoUpdateAdmin.getPaid());
+        if (eventDtoUpdateAdmin.getParticipantLimit() != null) event.setParticipantLimit(eventDtoUpdateAdmin.getParticipantLimit());
+        if (eventDtoUpdateAdmin.getRequestModeration() != null) event.setRequestModeration(eventDtoUpdateAdmin.getRequestModeration());
+        if (eventDtoUpdateAdmin.getTitle() != null) event.setTitle(eventDtoUpdateAdmin.getTitle());
         return event;
     }
 }
