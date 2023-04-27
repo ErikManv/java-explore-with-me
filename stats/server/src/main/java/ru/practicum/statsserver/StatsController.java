@@ -23,8 +23,8 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<List<HitDtoOut>> stats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+    public ResponseEntity<List<HitDtoOut>> stats(@RequestParam @DateTimeFormat(pattern = Pattern.DATE) LocalDateTime start,
+                                                @RequestParam @DateTimeFormat(pattern = Pattern.DATE) LocalDateTime end,
                                                 @RequestParam(required = false) List<String> uris,
                                                 @RequestParam(defaultValue = "false", required = false) boolean unique) {
         if (unique) {
