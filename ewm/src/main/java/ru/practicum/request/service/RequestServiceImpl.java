@@ -45,7 +45,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestDto addRequest(Long eventId, Long userId) {
         Event event = getEvent(eventId);
-        if (userId == event.getInitiator().getId()) {
+        if (userId.equals(event.getInitiator().getId())) {
             throw new UserRequestOwnEventException("нельзя создавать запрос на собственный Event");
         }
 
