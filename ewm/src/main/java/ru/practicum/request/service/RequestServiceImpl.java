@@ -107,12 +107,12 @@ public class RequestServiceImpl implements RequestService {
         List<Request> rejectedReq = new ArrayList<>();
         Event event = getEvent(eventId);
         if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
-            result.setConfirmedRequests(requestMapper.toRequestDtoList(confirmedReq));
-            result.setRejectedRequests(requestMapper.toRequestDtoList(rejectedReq));
+            result.setConfirmedRequests(new ArrayList<>());
+            result.setRejectedRequests(new ArrayList<>());
             log.info("confirmation of requests is not required");
             return result;
         }
-        if (requestStatusUpdateDto.getStatus().equals(RequestStatusToUpdate.CONFIRMED)) {
+        if (requestStatusUpdateDto.getStatus().equals(RequestStatus.CONFIRMED)) {
             for (int i = 0; i < requestsToUpdate.size(); i++) {
                 if (!requestsToUpdate.get(i).getStatus().equals(RequestStatus.PENDING)) {
                     throw new RequestStatusException("request " + requestsToUpdate.get(i).getId() + " wasn't PENDING");

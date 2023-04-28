@@ -25,7 +25,7 @@ public class Event {
     @OneToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
-    private int confirmedRequests;
+    private Long confirmedRequests;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
     private String description;

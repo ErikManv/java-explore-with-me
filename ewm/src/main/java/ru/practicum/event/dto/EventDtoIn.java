@@ -29,7 +29,7 @@ public class EventDtoIn {
     @NotNull
     private Location location;
     private boolean paid;
-    private int participantLimit;
+    private Long participantLimit;
     private Boolean requestModeration;
     @NotNull
     @Size(min = 3, max = 120)
