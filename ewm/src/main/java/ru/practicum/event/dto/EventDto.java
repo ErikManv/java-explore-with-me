@@ -19,10 +19,11 @@ import java.time.LocalDateTime;
 public class EventDto {
     private String annotation;
     private CategoryDto category;
-    private Long confirmedRequests;
+    private Integer confirmedRequests;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Pattern.DATE)
     private String createdOn;
     private String description;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Pattern.DATE)
     private LocalDateTime eventDate;
     private Long id;

@@ -65,7 +65,7 @@ public class RequestServiceImpl implements RequestService {
 
             List<Request> requests = requestRepository.findAllByEventId(eventId);
 
-            if (requests.size() >= event.getParticipantLimit()) {
+            if (!event.getRequestModeration() && requests.size() >= event.getParticipantLimit()) {
                 throw new ParticipantLimitException();
             }
 
@@ -107,8 +107,8 @@ public class RequestServiceImpl implements RequestService {
         List<Request> rejectedReq = new ArrayList<>();
         Event event = getEvent(eventId);
         if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
-            result.setConfirmedRequests(new ArrayList<>());
-            result.setRejectedRequests(new ArrayList<>());
+            result.setConfirmedRequests(requestMapper.toRequestDtoList(confirmedReq));
+            result.setRejectedRequests(requestMapper.toRequestDtoList(rejectedReq));
             log.info("confirmation of requests is not required");
             return result;
         }

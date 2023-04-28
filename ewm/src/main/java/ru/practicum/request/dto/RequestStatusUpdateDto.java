@@ -1,7 +1,6 @@
 package ru.practicum.request.dto;
 
 import lombok.*;
-import ru.practicum.enums.RequestStatus;
 import ru.practicum.enums.RequestStatusToUpdate;
 
 import java.util.List;

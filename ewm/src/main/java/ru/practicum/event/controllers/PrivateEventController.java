@@ -42,8 +42,8 @@ public class PrivateEventController {
 
     @PatchMapping("/{userId}/events/{eventId}")
     public ResponseEntity<EventDto> updateEvent(@RequestBody EventDtoUpdate eventDtoUpdatePrivate,
-                                                @PathVariable Long userId,
-                                                @PathVariable Long eventId) {
+                                                    @PathVariable Long userId,
+                                                    @PathVariable Long eventId) {
         return new ResponseEntity<>(eventServiceImpl.updateEvent(eventDtoUpdatePrivate, userId,eventId), HttpStatus.OK);
     }
 }
