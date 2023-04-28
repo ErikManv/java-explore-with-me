@@ -1,6 +1,7 @@
 package ru.practicum.request.dto;
 
 import lombok.*;
+import ru.practicum.enums.RequestStatusToUpdate;
 
 import java.util.List;
 
@@ -11,5 +12,5 @@ import java.util.List;
 @AllArgsConstructor
 public class RequestStatusUpdateDto {
     private List<Long> requestIds;
-    private String status;
+    private RequestStatusToUpdate status;
 }

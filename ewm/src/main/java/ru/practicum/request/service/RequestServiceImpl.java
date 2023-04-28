@@ -112,7 +112,7 @@ public class RequestServiceImpl implements RequestService {
             log.info("confirmation of requests is not required");
             return result;
         }
-        if (requestStatusUpdateDto.getStatus().equals(RequestStatusToUpdate.CONFIRMED.toString())) {
+        if (requestStatusUpdateDto.getStatus().equals(RequestStatusToUpdate.CONFIRMED)) {
             for (int i = 0; i < requestsToUpdate.size(); i++) {
                 if (!requestsToUpdate.get(i).getStatus().equals(RequestStatus.PENDING)) {
                     throw new RequestStatusException("request " + requestsToUpdate.get(i).getId() + " wasn't PENDING");
