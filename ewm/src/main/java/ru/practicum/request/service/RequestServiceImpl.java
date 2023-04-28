@@ -65,7 +65,7 @@ public class RequestServiceImpl implements RequestService {
 
             List<Request> requests = requestRepository.findAllByEventId(eventId);
 
-            if (requests.size() >= event.getParticipantLimit()) {
+            if (!event.getRequestModeration() && requests.size() >= event.getParticipantLimit()) {
                 throw new ParticipantLimitException();
             }
 
