@@ -54,7 +54,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleStateException(final StateException e) {
+    public ErrorResponse handleStateException(final EventStateException e) {
         return new ErrorResponse(
             "Объект не найден", e.getMessage()
         );
@@ -70,7 +70,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleIllegalEventStateException(final IllegalEventStateException e) {
+    public ErrorResponse handleIllegalEventStateException(final RequestStatusException e) {
         return new ErrorResponse(
             "Объект не найден", e.getMessage()
         );

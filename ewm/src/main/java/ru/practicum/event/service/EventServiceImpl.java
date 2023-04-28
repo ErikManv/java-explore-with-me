@@ -13,6 +13,8 @@ import ru.practicum.enums.EventState;
 import ru.practicum.enums.SortValueEvents;
 import ru.practicum.enums.StateActionForAdmin;
 import ru.practicum.enums.StateActionForUser;
+import ru.practicum.event.controllers.PrivateEventController;
+import ru.practicum.event.controllers.PublicEventController;
 import ru.practicum.event.dao.EventRepository;
 import ru.practicum.event.dto.EventDto;
 import ru.practicum.event.dto.EventDtoIn;
@@ -20,7 +22,7 @@ import ru.practicum.event.dto.EventDtoUpdate;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.exceptions.*;
-import ru.practicum.exceptions.StateException;
+import ru.practicum.exceptions.EventStateException;
 import ru.practicum.exceptions.notFound.CategoryNotFoundException;
 import ru.practicum.exceptions.notFound.EventNotFoundException;
 import ru.practicum.exceptions.notFound.UserNotFoundException;
@@ -46,12 +48,16 @@ public class EventServiceImpl implements EventService {
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Pattern.DATE);
     private final EventMapper eventMapper;
     private final StatsClient statsClient;
-    private static final Logger log = LoggerFactory.getLogger(AdminEventController.class);
+    private static final Logger logAdmin = LoggerFactory.getLogger(AdminEventController.class);
+    private static final Logger logPrivate = LoggerFactory.getLogger(PrivateEventController.class);
+    private static final Logger logPublic = LoggerFactory.getLogger(PublicEventController.class);
+
 
     //////////////////////////////////PRIVATE
     @Override
     public  List<EventDto> getEvents(Long userId, Integer from, Integer size) {
         getUser(userId);
+        logPrivate.info("events list was returned");
         return eventMapper.toEventDtoList(eventRepository.findEventsByInitiator(userId, from, size));
     }
 
@@ -68,7 +74,7 @@ public class EventServiceImpl implements EventService {
         event.setInitiator(getUser(userId));
         event.setState(EventState.PENDING);
         event.setViews(0L);
-        log.info("event {} created", event.getAnnotation());
+        logPrivate.info("event {} created", event.getAnnotation());
         return eventMapper.toEventDto(eventRepository.save(event));
     }
 
@@ -76,6 +82,7 @@ public class EventServiceImpl implements EventService {
     public EventDto getEvent(Long userId, Long eventId) {
         getEvent(eventId);
         getUser(userId);
+        logPrivate.info("event {} was returned", eventId);
         return eventMapper.toEventDto(eventRepository.findEventByInitiatorIdAndId(userId, eventId));
     }
 
@@ -95,6 +102,7 @@ public class EventServiceImpl implements EventService {
                 event.setState(EventState.CANCELED);
             }
         }
+        logPrivate.info("event {} was updated", eventId);
         return eventMapper.toEventDto(eventRepository.save(event));
 
     }
@@ -105,9 +113,9 @@ public class EventServiceImpl implements EventService {
         Event event = eventCompose(eventDtoUpdateAdmin, eventId);
         if (eventDtoUpdateAdmin.getStateAction().equals(StateActionForAdmin.PUBLISH_EVENT.toString())) {
             if (event.getState().equals(EventState.PUBLISHED)) {
-                throw new StateException("already PUBLISHED");
+                throw new EventStateException("already PUBLISHED");
             } else if (event.getState().equals(EventState.CANCELED)) {
-                throw new StateException("already CANCELED");
+                throw new EventStateException("already CANCELED");
             } else {
                 event.setState(EventState.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
@@ -116,13 +124,14 @@ public class EventServiceImpl implements EventService {
 
         if (eventDtoUpdateAdmin.getStateAction().equals(StateActionForAdmin.REJECT_EVENT.toString())) {
             if (event.getState().equals(EventState.PUBLISHED)) {
-                throw new StateException("already PUBLISHED");
+                throw new EventStateException("already PUBLISHED");
             } else if (event.getState().equals(EventState.CANCELED)) {
-                throw new StateException("already CANCELED");
+                throw new EventStateException("already CANCELED");
             } else {
                 event.setState(EventState.CANCELED);
             }
         }
+        logAdmin.info("event {} was updated", eventId);
         return eventMapper.toEventDto(eventRepository.save(event));
     }
 
@@ -130,9 +139,11 @@ public class EventServiceImpl implements EventService {
     public List<EventDto> getEventsParamAdmin(List<Long> users, List<String> states, List<Long> categoriesId, String rangeStart,
                                      String rangeEnd, Integer from, Integer size) {
         if (states != null) {
+            logPrivate.info("events list was returned with states filter");
             return eventMapper.toEventDtoList(eventRepository.searchByAdmin(users, states, categoriesId,
                 parseStringToDate(rangeStart), parseStringToDate(rangeEnd), from, size));
         } else {
+            logPrivate.info("events list was returned without states filter");
             return eventMapper.toEventDtoList(eventRepository.searchWithoutStateByAdmin(users,categoriesId,
                 parseStringToDate(rangeStart), parseStringToDate(rangeEnd), from, size));
 
@@ -151,7 +162,7 @@ public class EventServiceImpl implements EventService {
             .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern(Pattern.DATE)))
             .uri(request.getRequestURI())
             .build());
-
+        logPublic.info("events list was returned");
         return eventRepository.searchPublic(text, categoriesId, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size).stream()
             .map(eventMapper::toEventDto)
             .collect(Collectors.toList());
@@ -169,6 +180,7 @@ public class EventServiceImpl implements EventService {
             .build());
 
         event.setViews(event.getViews() + 1);
+        logPublic.info("event {} was returned", eventId);
         return eventMapper.toEventDto(eventRepository.save(event));
     }
 
