@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
-
     private final EventRepository eventRepository;
-
     private final CompilationMapper compilationMapper;
 
-    private static final Logger log = LoggerFactory.getLogger(AdminCompilationController.class);
+    private static final Logger logAdmin = LoggerFactory.getLogger(AdminCompilationController.class);
+    private static final Logger logPublic = LoggerFactory.getLogger(AdminCompilationController.class);
+
 
     @Override
     public CompilationDto addCompilation(CompilationDtoIn compilationDtoIn) {
@@ -39,7 +39,7 @@ public class CompilationServiceImpl implements CompilationService {
             .title(compilationDtoIn.getTitle())
             .events(events)
             .build();
-        log.info("compilation {} created", compilationDtoIn.getTitle());
+        logAdmin.info("compilation {} created", compilationDtoIn.getTitle());
         return compilationMapper.toDto(compilationRepository.save(compilation));
     }
 
@@ -47,19 +47,19 @@ public class CompilationServiceImpl implements CompilationService {
     public void deleteCompilation(Long compId) {
         getCompilation(compId);
         compilationRepository.deleteById(compId);
-        log.info("compilation {} deleted", compId);
+        logAdmin.info("compilation {} deleted", compId);
     }
-
 
     @Override
     public CompilationDto getCompilationById(Long compId) {
-        log.info("compilation {} found", compId);
+        logPublic.info("compilation {} found", compId);
         System.out.println(getCompilation(compId));
         return compilationMapper.toDto(getCompilation(compId));
     }
 
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+        logPublic.info("compilations list was returned");
         return compilationRepository.findComps(pinned, from, size).stream()
             .map(compilationMapper::toDto)
             .collect(Collectors.toList());
@@ -75,7 +75,7 @@ public class CompilationServiceImpl implements CompilationService {
             .build();
         List<Event> events = eventRepository.findEventsByIdIn(compilationDtoIn.getEvents());
         result.setEvents(events);
-        log.info("compilation {} updated", compId);
+        logAdmin.info("compilation {} updated", compId);
         return compilationMapper.toDto(compilationRepository.save(result));
     }
 

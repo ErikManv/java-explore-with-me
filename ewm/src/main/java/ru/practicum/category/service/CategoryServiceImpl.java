@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.practicum.category.controllers.PublicCategoryController;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.dao.CategoryRepository;
@@ -28,7 +29,9 @@ public class CategoryServiceImpl implements CategoryService {
     private final EventRepository eventRepository;
     private final CategoryMapper categoryMapper;
 
-    private static final Logger log = LoggerFactory.getLogger(AdminCategoryController.class);
+    private static final Logger logAdmin = LoggerFactory.getLogger(AdminCategoryController.class);
+    private static final Logger logPublic = LoggerFactory.getLogger(PublicCategoryController.class);
+
 
 
     @Override
@@ -37,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new DuplicateException("category", categoryDto.getName());
         }
         Category category = categoryMapper.toModel(categoryDto);
-        log.info("category {} created", categoryDto.getName());
+        logAdmin.info("category {} created", categoryDto.getName());
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 
@@ -49,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
         Category category = getCategory(categoryId);
         category.setName(categoryDto.getName());
-        log.info("category {} updated", categoryDto.getName());
+        logAdmin.info("category {} updated", categoryDto.getName());
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 
@@ -60,19 +63,19 @@ public class CategoryServiceImpl implements CategoryService {
         }
         getCategory(categoryId);
         categoryRepository.deleteById(categoryId);
-        log.info("category {} deleted", categoryId);
+        logAdmin.info("category {} deleted", categoryId);
     }
 
     @Override
     public List<CategoryDto> findAll(Integer from, Integer size) {
-        log.info("categories list returned");
+        logPublic.info("categories list returned");
         return categoryRepository.findAll(from, size).stream().map(categoryMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
     public CategoryDto getById(Long categoryId) {
         Category category = getCategory(categoryId);
-        log.info("category {} found", categoryId);
+        logPublic.info("category {} found", categoryId);
         return categoryMapper.toDto(category);
     }
 

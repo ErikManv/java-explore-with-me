@@ -14,7 +14,6 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-
     @Query(value = "SELECT * " +
     "FROM events " +
     "WHERE (initiator_id = :user) " +
@@ -33,22 +32,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query(value = "SELECT * " +
         "FROM events " +
         "WHERE (initiator_id IN :users OR :users IS NULL) " +
-        "AND (category_id IN :categories  OR :categories IS NULL) " +
-        "AND (event_date >= to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss')  OR to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
-        "AND (event_date <= to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss')   OR to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
-        "OFFSET :from " +
-        "LIMIT :size", nativeQuery = true)
-    List<Event> searchWithoutStateByAdmin(@Param("users") List<Long> users,
-                                          @Param("categories") List<Long> categories,
-                                          @Param("rangeStart") LocalDateTime rangeStart,
-                                          @Param("rangeEnd") LocalDateTime rangeEnd,
-                                          @Param("from") Integer from,
-                                          @Param("size") Integer size);
-
-    @Query(value = "SELECT * " +
-        "FROM events " +
-        "WHERE (initiator_id IN :users OR :users IS NULL) " +
-        "AND state IN :states " +
+        "AND (state IN :states OR :states IS NULL) " +
         "AND (category_id IN :categories  OR :categories IS NULL) " +
         "AND (event_date >= to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss')  OR to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
         "AND (event_date <= to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss')   OR to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
