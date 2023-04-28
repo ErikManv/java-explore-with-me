@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.enums.EventState;
 import ru.practicum.enums.RequestStatus;
 import ru.practicum.enums.RequestStatusToUpdate;
-import ru.practicum.event.controllers.AdminEventController;
-import ru.practicum.event.controllers.PrivateEventController;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.dao.EventRepository;
 import ru.practicum.exceptions.*;
