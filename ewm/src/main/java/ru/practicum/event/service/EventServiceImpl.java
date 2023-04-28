@@ -53,8 +53,6 @@ public class EventServiceImpl implements EventService {
     private static final Logger logPrivate = LoggerFactory.getLogger(PrivateEventController.class);
     private static final Logger logPublic = LoggerFactory.getLogger(PublicEventController.class);
 
-
-    //////////////////////////////////PRIVATE
     @Override
     public  List<EventDto> getEvents(Long userId, Integer from, Integer size) {
         getUser(userId);
@@ -108,7 +106,6 @@ public class EventServiceImpl implements EventService {
 
     }
 
-/////////////////////////////////////////ADMIN
     @Override
     public EventDto updateEventAdmin(EventDtoUpdate eventDtoUpdateAdmin, Long eventId) {
         Event event = eventCompose(eventDtoUpdateAdmin, eventId);
@@ -139,12 +136,17 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventDto> getEventsParamAdmin(List<Long> users, List<String> states, List<Long> categoriesId, String rangeStart,
                                      String rangeEnd, Integer from, Integer size) {
-
+        if (states != null) {
             logPrivate.info("events list was returned with states filter");
             return eventMapper.toEventDtoList(eventRepository.searchByAdmin(users, states, categoriesId,
                 parseStringToDate(rangeStart), parseStringToDate(rangeEnd), from, size));
+        } else {
+            logPrivate.info("events list was returned without states filter");
+            return eventMapper.toEventDtoList(eventRepository.searchWithoutStateByAdmin(users,categoriesId,
+                parseStringToDate(rangeStart), parseStringToDate(rangeEnd), from, size));
+
+        }
     }
-    //////////////////////////////////////PUBLIC
 
     @Override
     public List<EventDto> getEventsParamPublic(String text, List<Long> categoriesId, Boolean paid, String rangeStart,
@@ -207,7 +209,7 @@ public class EventServiceImpl implements EventService {
         if (eventDtoUpdateAdmin.getDescription() != null) event.setDescription(eventDtoUpdateAdmin.getDescription());
         if (eventDtoUpdateAdmin.getEventDate() != null) {
             if (eventDtoUpdateAdmin.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new DateException("Event date can't be later than 2 hours before the start");
+                throw new DateException("event date can't be later than 2 hours before the start");
             }
             event.setEventDate(eventDtoUpdateAdmin.getEventDate());
         }
