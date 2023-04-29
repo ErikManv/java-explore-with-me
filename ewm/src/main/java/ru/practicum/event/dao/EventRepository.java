@@ -58,7 +58,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
         "AND (:paid IS NULL OR e.paid = :paid) " +
         "AND (e.eventDate BETWEEN " +
         "to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss') AND to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss') " +
-        "OR e.eventDate > CURRENT_TIMESTAMP) " )
+        "OR e.eventDate > CURRENT_TIMESTAMP) ")
     List<Event> searchPublic(@Param("text") String text,
                              @Param("categories") List<Category> categories,
                              @Param("paid") Boolean paid,
