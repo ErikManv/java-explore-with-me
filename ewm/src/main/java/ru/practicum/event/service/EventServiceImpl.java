@@ -158,6 +158,12 @@ public class EventServiceImpl implements EventService {
                                                String rangeEnd, Boolean onlyAvailable, SortValueEvents sort,
                                                Integer from, Integer size, HttpServletRequest request) {
         List<Event> eventList;
+        statsClient.hit(HitDtoInput.builder()
+            .app("ewm")
+            .ip(request.getRemoteAddr())
+            .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern(Pattern.DATE)))
+            .uri(request.getRequestURI())
+            .build());
         if (sort != null) {
             if (sort.equals(SortValueEvents.EVENT_DATE)) {
                 logPublic.info("events list ordered by event date was returned");
@@ -181,12 +187,6 @@ public class EventServiceImpl implements EventService {
             eventList.stream().filter(x -> x.getConfirmedRequests() < x.getParticipantLimit())
                 .collect(Collectors.toList());
         }
-        statsClient.hit(HitDtoInput.builder()
-            .app("ewm")
-            .ip(request.getRemoteAddr())
-            .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern(Pattern.DATE)))
-            .uri(request.getRequestURI())
-            .build());
         return eventList.stream()
             .map(eventMapper::toEventDto)
             .collect(Collectors.toList());
