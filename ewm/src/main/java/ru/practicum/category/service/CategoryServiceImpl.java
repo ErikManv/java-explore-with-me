@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.controllers.PublicCategoryController;
 import ru.practicum.category.dto.CategoryDto;
@@ -69,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> findAll(Integer from, Integer size) {
         logPublic.info("categories list returned");
-        return categoryRepository.findAll(from, size).stream().map(categoryMapper::toDto).collect(Collectors.toList());
+        return categoryRepository.findAll(PageRequest.of(from, size)).stream().map(categoryMapper::toDto).collect(Collectors.toList());
     }
 
     @Override

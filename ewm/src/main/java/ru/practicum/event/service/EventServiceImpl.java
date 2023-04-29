@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.Pattern;
 import ru.practicum.category.model.Category;
@@ -55,9 +57,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public  List<EventDto> getEvents(Long userId, Integer from, Integer size) {
-        getUser(userId);
+        User user =  getUser(userId);
         logPrivate.info("events list was returned");
-        return eventMapper.toEventDtoList(eventRepository.findEventsByInitiator(userId, from, size));
+        return eventMapper.toEventDtoList(eventRepository.findEventsByInitiator(user, PageRequest.of(from, size)));
     }
 
     @Override
@@ -137,13 +139,16 @@ public class EventServiceImpl implements EventService {
     public List<EventDto> getEventsParamAdmin(List<Long> users, List<String> states, List<Long> categoriesId, String rangeStart,
                                      String rangeEnd, Integer from, Integer size) {
         if (states != null) {
+            List<EventState> statesEnum = states.stream().map(EventState::valueOf).collect(Collectors.toList());
             logPrivate.info("events list was returned with states filter");
-            return eventMapper.toEventDtoList(eventRepository.searchByAdmin(users, states, categoriesId,
-                parseStringToDate(rangeStart), parseStringToDate(rangeEnd), from, size));
+            return eventMapper.toEventDtoList(eventRepository.searchByAdmin(userRepository.findUsersByIdIn(users),
+                statesEnum, categoryRepository.findCategoriesByIdIn(categoriesId),
+                parseStringToDate(rangeStart), parseStringToDate(rangeEnd), PageRequest.of(from, size)));
         } else {
             logPrivate.info("events list was returned without states filter");
-            return eventMapper.toEventDtoList(eventRepository.searchWithoutStateByAdmin(users,categoriesId,
-                parseStringToDate(rangeStart), parseStringToDate(rangeEnd), from, size));
+            return eventMapper.toEventDtoList(eventRepository.searchWithoutStateByAdmin(userRepository.findUsersByIdIn(users),
+                categoryRepository.findCategoriesByIdIn(categoriesId),
+                parseStringToDate(rangeStart), parseStringToDate(rangeEnd), PageRequest.of(from, size)));
 
         }
     }
@@ -152,15 +157,37 @@ public class EventServiceImpl implements EventService {
     public List<EventDto> getEventsParamPublic(String text, List<Long> categoriesId, Boolean paid, String rangeStart,
                                                String rangeEnd, Boolean onlyAvailable, SortValueEvents sort,
                                                Integer from, Integer size, HttpServletRequest request) {
+        List<Event> eventList;
+        if (sort != null) {
+            if (sort.equals(SortValueEvents.EVENT_DATE)) {
+                logPublic.info("events list ordered by event date was returned");
+                eventList = eventRepository.searchPublic(text, categoryRepository.findCategoriesByIdIn(categoriesId), paid,
+                        parseStringToDate(rangeStart), parseStringToDate(rangeEnd),
+                        PageRequest.of(from, size, Sort.by("eventDate").ascending()));
+            } else {
+                logPublic.info("events list ordered by views was returned");
+                eventList =
+                    eventRepository.searchPublic(text, categoryRepository.findCategoriesByIdIn(categoriesId), paid,
+                        parseStringToDate(rangeStart), parseStringToDate(rangeEnd),
+                        PageRequest.of(from, size, Sort.by("views").ascending()));
+            }
+        } else {
+            eventList = eventRepository.searchPublic(text, categoryRepository.findCategoriesByIdIn(categoriesId), paid,
+                    parseStringToDate(rangeStart), parseStringToDate(rangeEnd),
+                    PageRequest.of(from, size));
+        }
 
+        if (onlyAvailable != null) {
+            eventList.stream().filter(x -> x.getConfirmedRequests() < x.getParticipantLimit())
+                .collect(Collectors.toList());
+        }
         statsClient.hit(HitDtoInput.builder()
             .app("ewm")
             .ip(request.getRemoteAddr())
             .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern(Pattern.DATE)))
             .uri(request.getRequestURI())
             .build());
-        logPublic.info("events list was returned");
-        return eventRepository.searchPublic(text, categoriesId, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size).stream()
+        return eventList.stream()
             .map(eventMapper::toEventDto)
             .collect(Collectors.toList());
     }

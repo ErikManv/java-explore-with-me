@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.user.controllers.AdminUserController;
 import ru.practicum.exceptions.DuplicateException;
@@ -23,24 +24,24 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
     private final UserMapper userMapper;
 
     private static final Logger log = LoggerFactory.getLogger(AdminUserController.class);
 
     @Override
     public List<UserDto> findUsers(List<Long> ids, Integer from, Integer size) {
+        List<User> userList;
+
         if (ids != null) {
             log.info("returned list of users by ids");
-            return userRepository.findAllById(ids).stream()
-                .map(userMapper::toUserDto)
-                .collect(Collectors.toList());
+            userList = userRepository.findUsers(ids);
         } else {
             log.info("returned limited list of users");
-            return userRepository.findUsersFrom(from, size).stream()
-                .map(userMapper::toUserDto)
-                .collect(Collectors.toList());
+            userList = userRepository.findAll(PageRequest.of(from, size)).toList();
         }
+        return userList.stream()
+            .map(userMapper::toUserDto)
+            .collect(Collectors.toList());
     }
 
     @Override

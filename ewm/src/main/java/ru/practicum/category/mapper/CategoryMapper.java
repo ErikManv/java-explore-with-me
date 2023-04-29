@@ -6,10 +6,10 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
 
 @Mapper(componentModel = "spring")
-    public interface CategoryMapper {
+public interface CategoryMapper {
 
-        CategoryDto toDto(Category category);
+    CategoryDto toDto(Category category);
 
-        @InheritInverseConfiguration
-        Category toModel(CategoryDto userDto);
-    }
+    @InheritInverseConfiguration
+    Category toModel(CategoryDto userDto);
+}

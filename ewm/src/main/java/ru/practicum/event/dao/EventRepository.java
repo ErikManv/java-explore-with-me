@@ -1,12 +1,14 @@
 package ru.practicum.event.dao;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.category.model.Category;
-import ru.practicum.enums.SortValueEvents;
+import ru.practicum.enums.EventState;
 import ru.practicum.event.model.Event;
+import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,14 +16,10 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query(value = "SELECT * " +
-    "FROM events " +
-    "WHERE (initiator_id = :user) " +
-        "OFFSET :from " +
-        "LIMIT :size", nativeQuery = true)
-    List<Event> findEventsByInitiator(@Param("user") Long user,
-                                      @Param("from") Integer from,
-                                      @Param("size") Integer size);
+    @Query("SELECT e " +
+    "FROM Event e " +
+    "WHERE (e.initiator = :user) ")
+    List<Event> findEventsByInitiator(@Param("user") User user, Pageable pageable);
 
     List<Event> findEventsByIdIn(List<Long> eventIds);
 
@@ -29,57 +27,42 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Boolean existsByCategory(Category category);
 
-    @Query(value = "SELECT * " +
-        "FROM events " +
-        "WHERE (initiator_id IN :users OR :users IS NULL) " +
-        "AND (category_id IN :categories  OR :categories IS NULL) " +
-        "AND (event_date >= to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss')  OR to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
-        "AND (event_date <= to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss')   OR to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
-        "OFFSET :from " +
-        "LIMIT :size", nativeQuery = true)
-    List<Event> searchWithoutStateByAdmin(@Param("users") List<Long> users,
-                                          @Param("categories") List<Long> categories,
+    @Query("SELECT e " +
+        "FROM Event e " +
+        "WHERE (e.initiator IN :users OR :users IS NULL) " +
+        "AND (e.category IN :categories  OR :categories IS NULL) " +
+        "AND (e.eventDate >= to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss')  OR to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
+        "AND (e.eventDate <= to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss')   OR to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss') IS NULL) ")
+    List<Event> searchWithoutStateByAdmin(@Param("users") List<User> users,
+                                          @Param("categories") List<Category> categories,
                                           @Param("rangeStart") LocalDateTime rangeStart,
-                                          @Param("rangeEnd") LocalDateTime rangeEnd,
-                                          @Param("from") Integer from,
-                                          @Param("size") Integer size);
+                                          @Param("rangeEnd") LocalDateTime rangeEnd, Pageable pageable);
 
-    @Query(value = "SELECT * " +
-        "FROM events " +
-        "WHERE (initiator_id IN :users OR :users IS NULL) " +
-        "AND state IN :states " +
-        "AND (category_id IN :categories  OR :categories IS NULL) " +
-        "AND (event_date >= to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss')  OR to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
-        "AND (event_date <= to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss')   OR to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
-        "OFFSET :from " +
-        "LIMIT :size", nativeQuery = true)
-    List<Event> searchByAdmin(@Param("users") List<Long> users,
-                              @Param("states") List<String> states,
-                              @Param("categories") List<Long> categories,
+    @Query("SELECT e " +
+        "FROM Event e " +
+        "WHERE (e.initiator IN :users OR :users IS NULL) " +
+        "AND e.state IN :states " +
+        "AND (e.category IN :categories  OR :categories IS NULL) " +
+        "AND (e.eventDate >= to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss')  OR to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss') IS NULL) " +
+        "AND (e.eventDate <= to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss')   OR to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss') IS NULL) ")
+    List<Event> searchByAdmin(@Param("users") List<User> users,
+                              @Param("states") List<EventState> states,
+                              @Param("categories") List<Category> categories,
                               @Param("rangeStart") LocalDateTime rangeStart,
-                              @Param("rangeEnd") LocalDateTime rangeEnd,
-                              @Param("from") Integer from,
-                              @Param("size") Integer size);
+                              @Param("rangeEnd") LocalDateTime rangeEnd, Pageable pageable);
 
-    @Query(value = "SELECT * " +
-        "FROM events  " +
-        "WHERE (lower(annotation) LIKE '%'||lower(:text)||'%' OR lower(description) LIKE '%'||lower(:text)||'%') " +
-        "AND (category_id IN :categories  OR :categories IS NULL) " +
-        "AND (:paid IS NULL OR paid = :paid) " +
-        "AND (event_date BETWEEN " +
+    @Query("SELECT e " +
+        "FROM Event e " +
+        "WHERE (lower(e.annotation) LIKE '%'||lower(:text)||'%' OR lower(e.description) LIKE '%'||lower(:text)||'%') " +
+        "AND (e.category IN :categories  OR :categories IS NULL) " +
+        "AND (:paid IS NULL OR e.paid = :paid) " +
+        "AND (e.eventDate BETWEEN " +
         "to_timestamp(:rangeStart, 'yyyy-mm-dd hh24:mi:ss') AND to_timestamp(:rangeEnd, 'yyyy-mm-dd hh24:mi:ss') " +
-        "OR event_date > CURRENT_TIMESTAMP) " +
-        "AND (participant_limit < confirmed_requests) = :onlyAvailable " +
-        "ORDER BY lower(cast(:sort as VARCHAR)) " +
-        "OFFSET :from " +
-        "LIMIT :size", nativeQuery = true)
+        "OR e.eventDate > CURRENT_TIMESTAMP) " )
     List<Event> searchPublic(@Param("text") String text,
-                             @Param("categories") List<Long> categories,
+                             @Param("categories") List<Category> categories,
                              @Param("paid") Boolean paid,
-                             @Param("rangeStart") String rangeStart,
-                             @Param("rangeEnd") String rangeEnd,
-                             @Param("onlyAvailable") Boolean onlyAvailable,
-                             @Param("sort") SortValueEvents sort,
-                             @Param("from") Integer from,
-                             @Param("size") Integer size);
+                             @Param("rangeStart") LocalDateTime rangeStart,
+                             @Param("rangeEnd") LocalDateTime rangeEnd,
+                             Pageable pageable);
 }

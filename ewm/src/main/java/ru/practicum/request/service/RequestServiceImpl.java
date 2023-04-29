@@ -27,6 +27,7 @@ import ru.practicum.user.dao.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,9 +51,11 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestDto addRequest(Long eventId, Long userId) {
-        Request requestCheck = requestRepository.findRequestByEventAndRequester(getEvent(eventId), getUser(userId));
-        if (requestCheck != null) {
-            throw new DuplicateException("request", requestCheck.getId().toString());
+        getEvent(eventId);
+        getUser(userId);
+        Optional<Request> requestCheck = requestRepository.findRequestByEventIdAndRequesterId(eventId, userId);
+        if (requestCheck.isPresent()) {
+            throw new DuplicateException("request", requestCheck.get().getId().toString());
         } else {
             Event event = getEvent(eventId);
             if (userId.equals(event.getInitiator().getId())) {

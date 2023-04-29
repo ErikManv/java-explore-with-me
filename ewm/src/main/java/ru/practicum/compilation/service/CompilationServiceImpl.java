@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.dao.CompilationRepository;
@@ -53,14 +54,15 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto getCompilationById(Long compId) {
         logPublic.info("compilation {} found", compId);
-        System.out.println(getCompilation(compId));
         return compilationMapper.toDto(getCompilation(compId));
     }
 
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+        List<Compilation> compilations = compilationRepository.findCompilations(pinned, PageRequest.of(from, size));
+
         logPublic.info("compilations list was returned");
-        return compilationRepository.findComps(pinned, from, size).stream()
+        return compilations.stream()
             .map(compilationMapper::toDto)
             .collect(Collectors.toList());
     }
