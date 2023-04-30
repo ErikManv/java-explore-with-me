@@ -262,7 +262,7 @@
                 },
                 {
                   "key": "eventId",
-                  "value": "10"
+                  "value": "10000"
                 }
               ]
             }
@@ -311,7 +311,7 @@
               "variable": [
                 {
                   "key": "userId",
-                  "value": "10"
+                  "value": "100000"
                 },
                 {
                   "key": "eventId",
