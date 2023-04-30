@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.3.8</version>
+            <version>42.5.4</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -84,10 +84,10 @@
             <version>${lombok-mapstruct-binding.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.14.2</version>
         </dependency>
 
     </dependencies>
@@ -101,7 +101,6 @@
             </plugin>
 
         </plugins>
-
 
         <pluginManagement>
             <plugins>

@@ -6,6 +6,6 @@ import ru.practicum.statsdto.HitDtoInput;
 
 @Mapper(componentModel = "spring")
 public interface HitMapper {
-    @Mapping(source = "timestamp",target = "timestamp", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(source = "timestamp",target = "timestamp", dateFormat = Pattern.DATE)
     Hit toHit(HitDtoInput hitDtoInput);
 }

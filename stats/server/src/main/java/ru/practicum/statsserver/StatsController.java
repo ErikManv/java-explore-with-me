@@ -18,13 +18,14 @@ public class StatsController {
     private final HitMapper hitMapper;
 
     @PostMapping("/hit")
-    public void hit(@RequestBody HitDtoInput hitDtoInput) {
+    public ResponseEntity<Void> hit(@RequestBody HitDtoInput hitDtoInput) {
         statsRepository.save(hitMapper.toHit(hitDtoInput));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<List<HitDtoOut>> stats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+    public ResponseEntity<List<HitDtoOut>> stats(@RequestParam @DateTimeFormat(pattern = Pattern.DATE) LocalDateTime start,
+                                                @RequestParam @DateTimeFormat(pattern = Pattern.DATE) LocalDateTime end,
                                                 @RequestParam(required = false) List<String> uris,
                                                 @RequestParam(defaultValue = "false", required = false) boolean unique) {
         if (unique) {

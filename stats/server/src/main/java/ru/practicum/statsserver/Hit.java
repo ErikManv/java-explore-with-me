@@ -28,8 +28,8 @@ public class Hit {
     private String uri;
     @Column
     private String ip;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = Pattern.DATE)
+    @JsonFormat(pattern = Pattern.DATE)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Column(name = "request_timestamp")
