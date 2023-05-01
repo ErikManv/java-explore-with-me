@@ -6,6 +6,7 @@ services:
     container_name: stats_container
     ports:
       - "9090:9090"
+    restart: on-failure
     depends_on:
       - stats-db
     environment:
@@ -31,6 +32,7 @@ services:
     container_name: ewm_container
     ports:
       - "8080:8080"
+    restart: on-failure
     depends_on:
       - ewm-db
     environment:
